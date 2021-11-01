@@ -1,7 +1,11 @@
 package com.example.pockemongo
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -10,6 +14,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.pockemongo.databinding.ActivityMapsBinding
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import java.security.Permission
+import java.util.jar.Manifest
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -42,7 +50,46 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.addMarker(MarkerOptions()
+            .position(sydney)
+            .title("Abdullah")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.me))
+            .snippet("Hi! it's me"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 4f))
+
+        checkPermissions()
+    }
+
+    fun checkPermissions(){
+
+        if(Build.VERSION.SDK_INT >= 23){
+            if ((ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED)){
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    1)
+            }else{
+                getCurrentLocation()
+            }
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1 && grantResults.size > 0 &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+            getCurrentLocation()
+        }
+    }
+
+    private fun getCurrentLocation() {
+        TODO("Not yet implemented")
     }
 }
